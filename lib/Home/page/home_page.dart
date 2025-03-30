@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:my_profile/Comments/page/comments_page.dart';
 import 'package:my_profile/Discover/page/discover_page.dart';
 import 'package:my_profile/gallery/pages/gallery_page.dart';
 import 'package:my_profile/login/page/login_page.dart';
+import 'package:my_profile/news/page/news_page.dart';
 //import 'package:my_profile/weather/page/weather_page.dart';
 import 'package:my_profile/profile/page/profile_page.dart';
+import 'package:my_profile/settings/pages/settings_page.dart';
 import 'package:my_profile/weather/page/weather_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -47,6 +50,33 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 child: Text('Gallery'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CommentsPage()),
+                  );
+                },
+                child: Text('Comments'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+                child: Text('Settings'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NewsPage()),
+                  );
+                },
+                child: Text('News'),
               ),
               TextButton(
                 onPressed: () {
