@@ -9,6 +9,7 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  int currentIndex = 0;
   List categoryList = [
     "all news",
 
@@ -22,7 +23,7 @@ class _NewsPageState extends State<NewsPage> {
 
   List<NewsDataModel> sliderlist = [
     NewsDataModel(
-      title: 'Kevin De Bruyne',
+      title: 'Lion ant in race',
       description: 'Ucl news',
       image: 'assets/twelve.jpg',
       publishertime: '13:24',
@@ -30,7 +31,7 @@ class _NewsPageState extends State<NewsPage> {
       activeusers: 23,
     ),
     NewsDataModel(
-      title: 'Kevin De Bruyne',
+      title: 'calling the day',
       description: 'Ucl news',
       image: 'assets/eleven.jpg',
       publishertime: '13:24',
@@ -38,7 +39,7 @@ class _NewsPageState extends State<NewsPage> {
       activeusers: 23,
     ),
     NewsDataModel(
-      title: 'Kevin De Bruyne',
+      title: 'Baby',
       description: 'Ucl news',
       image: 'assets/thirteen.jpg',
       publishertime: '13:24',
@@ -46,7 +47,7 @@ class _NewsPageState extends State<NewsPage> {
       activeusers: 23,
     ),
     NewsDataModel(
-      title: 'Kevin De Bruyne',
+      title: 'Frog in water',
       description: 'Ucl news',
       image: 'assets/fourteen.jpg',
       publishertime: '13:24',
@@ -54,7 +55,7 @@ class _NewsPageState extends State<NewsPage> {
       activeusers: 23,
     ),
     NewsDataModel(
-      title: 'Kevin De Bruyne',
+      title: 'fade in all',
       description: 'Ucl news',
       image: 'assets/fifteen.jpg',
       publishertime: '13:24',
@@ -62,7 +63,7 @@ class _NewsPageState extends State<NewsPage> {
       activeusers: 23,
     ),
     NewsDataModel(
-      title: 'Kevin De Bruyne',
+      title: 'All right',
       description: 'Ucl news',
       image: 'assets/sixteen.jpg',
       publishertime: '13:24',
@@ -112,7 +113,10 @@ class _NewsPageState extends State<NewsPage> {
                       margin: const EdgeInsets.all(1),
                       padding: EdgeInsets.all(10),
 
-                      color: const Color.fromARGB(255, 51, 53, 54),
+                      color:
+                          currentIndex == index
+                              ? Colors.amber
+                              : Color.fromARGB(255, 51, 53, 54),
                       child: Text(
                         categoryList[index],
                         style: TextStyle(
@@ -232,13 +236,7 @@ class _NewsPageState extends State<NewsPage> {
 
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      '/detail',
-                      arguments: sliderlist[index],
-                    );
-                  },
+                  onTap: () {},
                   child: Container(
                     width: 100,
                     height: 130,

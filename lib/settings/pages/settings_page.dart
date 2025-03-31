@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_profile/profile/widget/profilie_widget.dart';
+//import 'package:my_profile/profile/widget/profilie_widget.dart';
 import 'package:my_profile/weather/widget/weather_widget.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -28,6 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
       body: ListView(
+        shrinkWrap: true,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 20),
@@ -77,32 +78,98 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
 
-          SizedBox(height: 20),
-
-          ListView.separated(
-            separatorBuilder: (context, index) {
-              return Column(children: [Divider(), SizedBox(height: 20)]);
-            },
-
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: profileData.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/discover',
-                    arguments: profileData[index].weather,
-                  );
-                },
-                child: ProfileWidget(
-                  icon: profileData[index].icon,
-                  weather: profileData[index].weather,
-                  prefixIcon: Icons.arrow_right,
+          SizedBox(height: 40),
+          Container(
+            padding: EdgeInsets.only(left: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Dark Mode",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 13, 13, 13),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
+                Text(
+                  "Notifications",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 40),
+          Text(
+            "Account",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.only(left: 20),
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Edit Account",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 13, 13, 13),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "Change Password",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "Language",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 40),
+          Text(
+            "Privacy and Security",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.only(left: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Privacy Account",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 13, 13, 13),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "Privacy and Security help",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
         ],
       ),

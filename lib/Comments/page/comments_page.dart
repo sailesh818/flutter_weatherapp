@@ -14,24 +14,24 @@ class _CommentsPageState extends State<CommentsPage> {
       title: 'Mr Sam',
       description:
           'Mr Sam is always the good person with the good personality that wonders everywhere,',
-      CircleAvatar: 'assets/one.jpg',
+      circleAvatar: 'assets/one.jpg',
     ),
     DataModel(
       title: 'Ms. Gauri',
       description: 'Its ady and hw he created the days all out of as sudedden',
-      CircleAvatar: 'assets/one.jpg',
+      circleAvatar: 'assets/one.jpg',
     ),
     DataModel(
       title: 'Karan dar',
       description:
           'Its always good for the starting days to begin the days that has always been wondering days.',
-      CircleAvatar: 'assets/one.jpg',
+      circleAvatar: 'assets/one.jpg',
     ),
     DataModel(
       title: 'Kevin Dadaadd',
       description:
           'Its going to be late to v=begin the days out from here in the shine',
-      CircleAvatar: 'assets/one.jpg',
+      circleAvatar: 'assets/one.jpg',
     ),
   ];
 
@@ -76,7 +76,7 @@ class _CommentsPageState extends State<CommentsPage> {
                                   color: const Color.fromARGB(255, 9, 92, 143),
                                   image: DecorationImage(
                                     image: AssetImage(
-                                      sliderlist[index].CircleAvatar,
+                                      sliderlist[index].circleAvatar,
                                     ),
                                     fit: BoxFit.cover,
                                   ),

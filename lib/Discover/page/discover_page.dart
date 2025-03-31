@@ -10,6 +10,7 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
+  int currentIndex = 0;
   List categoryList = [
     "all",
     "sports",
@@ -151,7 +152,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       margin: const EdgeInsets.all(1),
                       padding: EdgeInsets.all(10),
 
-                      color: const Color.fromARGB(255, 51, 53, 54),
+                      color:
+                          currentIndex == index
+                              ? Colors.amber
+                              : Color.fromARGB(255, 51, 53, 54),
                       child: Text(
                         categoryList[index],
                         style: TextStyle(

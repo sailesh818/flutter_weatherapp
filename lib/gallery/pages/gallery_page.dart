@@ -26,6 +26,7 @@ class _GalleryPageState extends State<GalleryPage> {
         _image = File(pickedFile.path);
         //widget.imgUrl = null;
       } else {
+        // ignore: avoid_print
         print("No Image Printed");
       }
     });
@@ -100,7 +101,11 @@ class _GalleryPageState extends State<GalleryPage> {
             onTap: () {
               getImageGallery();
             },
-            child: Container(child: Text("Upload")),
+            child: Container(
+              padding: EdgeInsets.all(12),
+
+              child: Text("Upload"),
+            ),
           ),
         ],
       ),

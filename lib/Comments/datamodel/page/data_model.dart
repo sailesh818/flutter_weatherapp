@@ -1,12 +1,12 @@
 class DataModel {
   String title;
   String description;
-  String CircleAvatar;
+  String circleAvatar;
 
   DataModel({
     required this.title,
     required this.description,
-    required this.CircleAvatar,
+    required this.circleAvatar,
   });
   // ignore: empty_constructor_bodies
 }

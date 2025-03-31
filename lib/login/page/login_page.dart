@@ -32,8 +32,9 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: "Email",
                   ),
                   validator: (value) {
-                    if ((value ?? "").isEmpty) {
-                      return "Email cannot be empty";
+                    if (value!.isEmpty ||
+                        !RegExp(r"^[a-zA]+@[a-z]+").hasMatch(value)) {
+                      return 'Enter a valid email!';
                     } else {
                       return null;
                     }
@@ -49,8 +50,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   validator: (value) {
-                    if ((value ?? "").isEmpty) {
-                      return "Password cannot be empty";
+                    if (value!.isEmpty || !RegExp(r"^@[0-9]").hasMatch(value)) {
+                      return 'Enter a valid email!';
                     } else {
                       return null;
                     }
