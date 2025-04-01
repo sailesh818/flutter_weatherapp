@@ -38,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
               MaterialPageRoute(builder: (context) => HomePage()),
             );
           },
+
           child: Icon(Icons.arrow_back),
         ),
         title: Text("Profile"),

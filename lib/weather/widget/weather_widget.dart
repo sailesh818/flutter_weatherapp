@@ -20,7 +20,7 @@ class WeatherForecastItem extends StatelessWidget {
       padding: const EdgeInsetsDirectional.symmetric(horizontal: 10.0),
       child: Container(
         height: 50,
-        color: const Color.fromARGB(255, 97, 153, 238),
+        color: const Color.fromARGB(255, 215, 217, 223),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -28,14 +28,22 @@ class WeatherForecastItem extends StatelessWidget {
               children: [
                 Icon(
                   icon ?? Icons.circle,
-                  color: const Color.fromARGB(255, 175, 204, 230),
+                  color: const Color.fromARGB(255, 12, 12, 12),
                 ),
                 SizedBox(width: 10),
-                Text(weather ?? "N/A", style: TextStyle(color: Colors.white)),
+                Text(
+                  weather ?? "N/A",
+                  style: TextStyle(
+                    color: const Color.fromARGB(255, 12, 12, 12),
+                  ),
+                ),
               ],
             ),
             //Icon(prefixIcon ?? Icons.map),
-            Text(prefix ?? "12/23", style: TextStyle(color: Colors.white)),
+            Text(
+              prefix ?? "12/23",
+              style: TextStyle(color: const Color.fromARGB(255, 4, 4, 4)),
+            ),
           ],
         ),
       ),

@@ -14,5 +14,8 @@ class NewsDataModel {
     required this.author,
     this.activeusers,
   });
-  // ignore: empty_constructor_bodies
+
+  static Future<()> fromJson(item) async {
+    return ();
+  }
 }
