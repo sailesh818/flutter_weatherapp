@@ -9,6 +9,7 @@ import 'package:my_profile/Discover/model/news_data_model.dart';
 import 'package:my_profile/Discover/widget/categorylist_widget.dart';
 import 'package:my_profile/Discover/widget/explore_wdiget.dart';
 import 'package:my_profile/Discover/widget/slider_container_widget.dart';
+import 'package:my_profile/database/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -115,12 +116,42 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   NewsDataModel? newsDataModel;
 
+  List<Map<String, dynamic>> storedArticles = [
+    {
+      'id': 1,
+      'title': 'Article 1',
+      'author': 'Author 1',
+      'description': 'This is article 1.',
+      'url': 'http://example.com/1',
+    },
+    {
+      'id': 2,
+      'title': 'Article 2',
+      'author': 'Author 2',
+      'description': 'This is article 2.',
+      'url': 'http://example.com/2',
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
     // fetchAlbumData();
     loadAlbumData();
+    loadStoredArticles();
     getTitle();
+  }
+
+  Future<void> loadStoredArticles() async {
+    final articles = await fetchStoredArticles();
+    setState(() {
+      storedArticles = articles;
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> fetchStoredArticles() async {
+    final db = await DatabaseService().database;
+    return await db.query(DatabaseService.tableName);
   }
 
   void loadAlbumData() async {
@@ -181,13 +212,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
     setState(() {});
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchAlbumData();
-  //   loadAlbumData();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,7 +249,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
@@ -236,19 +260,34 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
-                  'See more',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal,
-                  ),
+                const SizedBox(height: 10),
+                ListView.builder(
+                  itemCount: storedArticles.length,
+                  itemBuilder: (context, index) {
+                    final article = storedArticles[index];
+                    return ListTile(
+                      title: Text(article['title'] ?? 'No Title'),
+                      subtitle: Text(
+                        article['description'] ?? 'No Description',
+                      ),
+                      onTap: () {},
+                    );
+                  },
                 ),
+
+                // const Text(
+                //   'See more',
+                //   style: TextStyle(
+                //     fontSize: 10,
+                //     color: Colors.white,
+                //     fontWeight: FontWeight.normal,
+                //   ),
+                // ),
               ],
             ),
           ),
-          const SizedBox(height: 10),
 
+          const SizedBox(height: 10),
           SizedBox(
             height: 90,
             child: ListView.separated(

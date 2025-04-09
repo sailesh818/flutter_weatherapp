@@ -46,4 +46,18 @@ CREATE TABLE $tableName(
       },
     );
   }
+
+  Future<void> insertArticle(Map<String, dynamic> article) async {
+    final db = await database;
+    await db.insert(
+      tableName,
+      article,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> fetchStoredArticles() async {
+    final db = await DatabaseService().database;
+    return await db.query(DatabaseService.tableName);
+  }
 }

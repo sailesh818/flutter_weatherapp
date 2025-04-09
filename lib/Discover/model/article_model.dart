@@ -64,3 +64,16 @@ class Source {
 
   Map<String, dynamic> toJson() => {"id": id, "name": name};
 }
+
+
+
+// class NewsWidget extends StatelessWidget{
+  //   const NewsWidget({
+  //     super.key,
+  //   });
+
+  //   final String image;
+  //   final String publishedAt;
+  //   final String title;
+  //   final String description;
+  // }
