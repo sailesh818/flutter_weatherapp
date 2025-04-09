@@ -9,6 +9,7 @@ import 'package:my_profile/Discover/model/news_data_model.dart';
 import 'package:my_profile/Discover/widget/categorylist_widget.dart';
 import 'package:my_profile/Discover/widget/explore_wdiget.dart';
 import 'package:my_profile/Discover/widget/slider_container_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -117,12 +118,16 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   void initState() {
     super.initState();
-    fetchAlbumData();
+    // fetchAlbumData();
     loadAlbumData();
+    getTitle();
   }
 
   void loadAlbumData() async {
-    newsDataModel = await fetchAlbumData();
+    final data = await fetchAlbumData();
+    setState(() {
+      newsDataModel = data;
+    });
   }
 
   Future<NewsDataModel?> fetchAlbumData() async {
@@ -135,7 +140,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         return NewsDataModel.fromJson(jsonDecode(response.body));
       }
     } catch (e) {
-      throw Exception();
+      throw Exception('Failed to load data');
     }
     return null;
   }
@@ -162,9 +167,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return null;
   }
 
-  // void loadAlbumData() async {
-  //   newsDataModel = await fetchAlbumData();
-  // }
+  Future<void> saveTitle(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("title", value);
+    getTitle();
+  }
+
+  String? title;
+
+  void getTitle() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    title = prefs.getString("title");
+    setState(() {});
+  }
 
   // @override
   // void initState() {
@@ -255,7 +270,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: NetworkImage(sliderlist[index].image),
+                        image: AssetImage(sliderlist[index].image),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -273,13 +288,22 @@ class _DiscoverPageState extends State<DiscoverPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Most Read',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Color.fromARGB(255, 246, 243, 243),
-                    fontWeight: FontWeight.bold,
+                InkWell(
+                  onTap: () {
+                    saveTitle(newsDataModel?.title ?? "");
+                  },
+                  child: const Text(
+                    'Most Read',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color.fromARGB(255, 246, 243, 243),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                ),
+                Text(
+                  title ?? "N/A",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 const Text(
                   'See more',

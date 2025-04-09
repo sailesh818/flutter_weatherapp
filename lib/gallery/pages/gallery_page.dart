@@ -33,8 +33,14 @@ class _GalleryPageState extends State<GalleryPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Optionally call getImageGallery() here if you want it to run once at startup.
+    // getImageGallery();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    getImageGallery();
     return Scaffold(
       appBar: AppBar(title: Text('Gallery')),
       body: Column(

@@ -117,7 +117,7 @@ class _SliderContainerWidgetState extends State<SliderContainerWidget> {
                 borderRadius: BorderRadius.circular(20),
                 color: const Color.fromARGB(255, 9, 92, 143),
                 image: DecorationImage(
-                  image: NetworkImage(sliderlist[index].image),
+                  image: AssetImage(sliderlist[index].image),
                   fit: BoxFit.cover,
                 ),
               ),
