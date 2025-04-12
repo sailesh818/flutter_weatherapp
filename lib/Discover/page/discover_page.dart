@@ -1,16 +1,62 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_profile/Discover/model/article_model.dart';
-//import 'package:http/http.dart' as http;
-//import 'dart:convert';
-import 'package:my_profile/Discover/model/news_data_model.dart';
-import 'package:my_profile/Discover/widget/categorylist_widget.dart';
-import 'package:my_profile/Discover/widget/explore_wdiget.dart';
-import 'package:my_profile/Discover/widget/slider_container_widget.dart';
-import 'package:my_profile/database/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_profile/database/database_service.dart';
+
+class ArticleProperty {
+  Source source;
+  String? author;
+  String title;
+  String description;
+  String url;
+  String? urlToImage;
+  DateTime publishedAt;
+  String? content;
+
+  ArticleProperty({
+    required this.source,
+    this.author,
+    required this.title,
+    required this.description,
+    required this.url,
+    this.urlToImage,
+    required this.publishedAt,
+    this.content,
+  });
+
+  factory ArticleProperty.fromJson(Map<String, dynamic> json) =>
+      ArticleProperty(
+        source: Source.fromJson(json["source"]),
+        author: json["author"] ?? "Unknown",
+        title: json["title"] ?? "No Title",
+        description: json["description"] ?? "",
+        url: json["url"] ?? "",
+        urlToImage: json["urlToImage"],
+        publishedAt:
+            json["publishedAt"] != null
+                ? DateTime.parse(json["publishedAt"])
+                : DateTime.now(),
+        content: json["content"],
+      );
+
+  Map<String, dynamic> toDbMap() => {
+    DatabaseService.title: title,
+    DatabaseService.author: author ?? "",
+    DatabaseService.description: description,
+    DatabaseService.url: url,
+  };
+}
+
+class Source {
+  dynamic id;
+  String name;
+
+  Source({this.id, required this.name});
+
+  factory Source.fromJson(Map<String, dynamic> json) =>
+      Source(id: json["id"], name: json["name"] ?? "No Source");
+}
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -20,196 +66,73 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  int currentIndex = 0;
-  List<String> categoryList = [
-    "all",
-    "sports",
-    "Politics",
-    "Entertainment",
-    "Technology",
-    "Science",
-    "Education",
-  ];
-
-  List<NewsDataModel> sliderlist = [
-    NewsDataModel(
-      title: 'Kevin De Bruyne',
-      description: 'Ucl news',
-      image: 'assets/one.jpg',
-      publishertime: '13:24',
-      author: 'Radioboy',
-      activeusers: 23,
-    ),
-    NewsDataModel(
-      title: 'Mbape lottery',
-      description: 'He hit the loss',
-      image: 'assets/two.jpg',
-      publishertime: '19:24',
-      author: 'deadly day',
-      activeusers: 96,
-    ),
-    NewsDataModel(
-      title: 'Rayane mayane glory at ',
-      description: 'He dug the earth out from the universe',
-      image: 'assets/three.jpg',
-      publishertime: '11:24',
-      author: 'walking dead',
-      activeusers: 54,
-    ),
-    NewsDataModel(
-      title: 'Calling all the day out',
-      description: 'Ucl news has been remebered all',
-      image: 'assets/four.jpg',
-      publishertime: '6:24',
-      author: 'Running nose',
-      activeusers: 34,
-    ),
-    NewsDataModel(
-      title: 'Futsal',
-      description: 'Its popularity hasbeen growing',
-      image: 'assets/five.jpg',
-      publishertime: '7:24',
-      author: 'daily days',
-      activeusers: 995,
-    ),
-    NewsDataModel(
-      title: 'Nobody dares to move',
-      description: 'Calling all the day out',
-      image: 'assets/six.jpg',
-      publishertime: '9:24',
-      author: 'calling',
-      activeusers: 2378,
-    ),
-    NewsDataModel(
-      title: 'Hoping the new',
-      description: 'Its begining to bring the glory',
-      image: 'assets/seven.jpg',
-      publishertime: '10:24',
-      author: 'beam Radioboy',
-      activeusers: 903,
-    ),
-    NewsDataModel(
-      title: 'Sunlight',
-      description: 'was he the one?',
-      image: 'assets/eight.jpg',
-      publishertime: '3:24',
-      author: 'moonlight Radioboy',
-      activeusers: 67,
-    ),
-    NewsDataModel(
-      title: 'moonlight in the dimlight',
-      description: 'its beautiful night to begin the day',
-      image: 'assets/nine.jpg',
-      publishertime: '1:24',
-      author: 'happy Radioboy',
-      activeusers: 89,
-    ),
-    NewsDataModel(
-      title: 'calling the day',
-      description: 'it has been all day out',
-      image: 'assets/ten.jpg',
-      publishertime: '15:267',
-      author: 'Radioboy in husk',
-      activeusers: 98,
-    ),
-  ];
-
-  NewsDataModel? newsDataModel;
-
-  List<Map<String, dynamic>> storedArticles = [
-    {
-      'id': 1,
-      'title': 'Article 1',
-      'author': 'Author 1',
-      'description': 'This is article 1.',
-      'url': 'http://example.com/1',
-    },
-    {
-      'id': 2,
-      'title': 'Article 2',
-      'author': 'Author 2',
-      'description': 'This is article 2.',
-      'url': 'http://example.com/2',
-    },
-  ];
+  List<ArticleProperty> articles = [];
+  List<Map<String, dynamic>> storedArticles = [];
+  String? title;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // fetchAlbumData();
-    loadAlbumData();
-    loadStoredArticles();
+    fetchArticles();
     getTitle();
+    loadStoredArticles();
+  }
+
+  Future<void> fetchArticles() async {
+    const url =
+        'https://saurav.tech/NewsAPI/top-headlines/category/health/in.json';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        List<ArticleProperty> loadedArticles =
+            (data['articles'] as List)
+                .map((json) => ArticleProperty.fromJson(json))
+                .toList();
+
+        if (loadedArticles.isNotEmpty) {
+          //await DatabaseService().insertArticle(loadedArticles[0].toDbMap());
+          for (final article in loadedArticles.take(5)) {
+            await DatabaseService().insertArticle(article.toDbMap());
+          }
+          await loadStoredArticles();
+        }
+
+        setState(() {
+          articles = loadedArticles;
+          isLoading = false;
+        });
+      } else {
+        print("Failed to load articles: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching articles: $e");
+    }
   }
 
   Future<void> loadStoredArticles() async {
-    final articles = await fetchStoredArticles();
-    setState(() {
-      storedArticles = articles;
-    });
-  }
-
-  Future<List<Map<String, dynamic>>> fetchStoredArticles() async {
-    final db = await DatabaseService().database;
-    return await db.query(DatabaseService.tableName);
-  }
-
-  void loadAlbumData() async {
-    final data = await fetchAlbumData();
-    setState(() {
-      newsDataModel = data;
-    });
-  }
-
-  Future<NewsDataModel?> fetchAlbumData() async {
     try {
-      final response = await http.get(
-        Uri.parse('https://jsonplaceholder.typicode.com/albums/1'),
-      );
-      print(response);
-      if (response.statusCode == 200) {
-        return NewsDataModel.fromJson(jsonDecode(response.body));
-      }
+      final stored = await DatabaseService().fetchStoredArticles();
+      setState(() {
+        storedArticles = stored;
+      });
     } catch (e) {
-      throw Exception('Failed to load data');
+      print("Error loading stored articles: $e");
     }
-    return null;
-  }
-
-  Future<List<ArticleProperty>?> fetchArticleData() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          'https://saurav.tech/NewsAPI/top-headlines/category/health/in.json',
-        ),
-      );
-      print(response);
-      if (response.statusCode == 200) {
-        var jsonResponse = jsonDecode(response.body);
-        List<ArticleProperty> articles =
-            (jsonResponse['articles'] as List)
-                .map((article) => ArticleProperty.fromJson(article))
-                .toList();
-        return articles;
-      }
-    } catch (e) {
-      throw Exception('Failed to load article data');
-    }
-    return null;
   }
 
   Future<void> saveTitle(String value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     await prefs.setString("title", value);
     getTitle();
   }
 
-  String? title;
-
   void getTitle() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    title = prefs.getString("title");
-    setState(() {});
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      title = prefs.getString("title");
+    });
   }
 
   @override
@@ -218,145 +141,188 @@ class _DiscoverPageState extends State<DiscoverPage> {
       backgroundColor: const Color.fromARGB(255, 7, 1, 30),
       appBar: AppBar(
         centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notification_add),
-            iconSize: 30,
-            color: Colors.white,
-            onPressed: () {},
-          ),
+        backgroundColor: const Color.fromARGB(255, 7, 1, 30),
+        actions: const [
+          Icon(Icons.notifications, size: 30, color: Colors.white),
+          SizedBox(width: 10),
           CircleAvatar(
             radius: 20,
             backgroundImage: AssetImage('assets/one.jpg'),
           ),
+          SizedBox(width: 10),
         ],
-        backgroundColor: const Color.fromARGB(255, 7, 1, 30),
         title: const Text(
           'Discover Page',
           style: TextStyle(color: Colors.white, fontSize: 25),
         ),
       ),
-      body: ListView(
-        children: [
-          CategorylistWidget(),
-
-          const SizedBox(height: 10),
-          Text(newsDataModel?.title ?? ""),
-
-          SliderContainerWidget(),
-
-          const SizedBox(height: 5),
-
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Explore',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ListView.builder(
-                  itemCount: storedArticles.length,
-                  itemBuilder: (context, index) {
-                    final article = storedArticles[index];
-                    return ListTile(
-                      title: Text(article['title'] ?? 'No Title'),
-                      subtitle: Text(
-                        article['description'] ?? 'No Description',
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView(
+                padding: const EdgeInsets.all(12),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if (articles.isNotEmpty) {
+                            saveTitle(articles[0].title);
+                          }
+                        },
+                        child: const Text(
+                          'Most Read',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      onTap: () {},
-                    );
-                  },
-                ),
+                      Text(
+                        title ?? "N/A",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const Text(
+                        'See more',
+                        style: TextStyle(fontSize: 12, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
 
-                // const Text(
-                //   'See more',
-                //   style: TextStyle(
-                //     fontSize: 10,
-                //     color: Colors.white,
-                //     fontWeight: FontWeight.normal,
-                //   ),
-                // ),
-              ],
-            ),
-          ),
+                  ...articles
+                      .take(5)
+                      .map(
+                        (article) => NewsWidget(
+                          image: article.urlToImage ?? 'assets/one.jpg',
+                          publishedAt:
+                              article.publishedAt.toLocal().toString().split(
+                                ".",
+                              )[0],
+                          title: article.title,
+                          description: article.description,
+                          showSave: true,
+                          onSave: () async {
+                            await DatabaseService().insertArticle(
+                              article.toDbMap(),
+                            );
+                            await loadStoredArticles();
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Article saved for offline viewing",
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
 
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 90,
-            child: ListView.separated(
-              padding: const EdgeInsets.only(left: 10),
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      '/detail',
-                      arguments: sliderlist[index],
-                    );
-                  },
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(sliderlist[index].image),
-                        fit: BoxFit.fill,
+                  const SizedBox(height: 20),
+
+                  const Text(
+                    "Stored Articles",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  const Divider(color: Colors.white30),
+
+                  if (storedArticles.isEmpty)
+                    const Text(
+                      "No articles saved locally.",
+                      style: TextStyle(color: Colors.white70),
+                    )
+                  else
+                    ...storedArticles.map(
+                      (article) => NewsWidget(
+                        image: 'assets/one.jpg',
+                        publishedAt: 'Saved Locally',
+                        title: article[DatabaseService.title],
+                        description: article[DatabaseService.description],
                       ),
                     ),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) => const SizedBox(width: 1),
-              itemCount: sliderlist.length,
-            ),
-          ),
-          const SizedBox(height: 10),
+                ],
+              ),
+    );
+  }
+}
 
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-                    saveTitle(newsDataModel?.title ?? "");
-                  },
-                  child: const Text(
-                    'Most Read',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Color.fromARGB(255, 246, 243, 243),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  title ?? "N/A",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                const Text(
-                  'See more',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Color.fromARGB(255, 246, 243, 243),
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-              ],
+class NewsWidget extends StatelessWidget {
+  const NewsWidget({
+    super.key,
+    required this.image,
+    required this.publishedAt,
+    required this.title,
+    required this.description,
+    this.onSave,
+    this.showSave = false,
+  });
+
+  final String image;
+  final String publishedAt;
+  final String title;
+  final String description;
+  final VoidCallback? onSave;
+  final bool showSave;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.white12,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child:
+              image.startsWith('http')
+                  ? Image.network(
+                    image,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorBuilder:
+                        (context, error, stackTrace) => Image.asset(
+                          'assets/one.jpg',
+                          width: 60,
+                          height: 60,
+                        ),
+                  )
+                  : Image.asset(image, width: 60, height: 60),
+        ),
+        title: Text(
+          title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: Colors.white),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.white70),
             ),
-          ),
-          LastSizedboxWidget(),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              "Published: $publishedAt",
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ],
+        ),
+        trailing:
+            showSave
+                ? IconButton(
+                  icon: const Icon(Icons.bookmark_add, color: Colors.white),
+                  onPressed: onSave,
+                )
+                : null,
       ),
     );
   }

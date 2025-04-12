@@ -17,9 +17,6 @@ class DatabaseService {
   static const String author = "author";
   static const String description = "description";
   static const String url = "url";
-  // static const String urlToImage = "urltoimage";
-  // // static const DateTime publishedAt;
-  // static const String content = "content";
 
   Database? _database;
 
