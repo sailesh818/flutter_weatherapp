@@ -6,10 +6,6 @@ import 'package:my_profile/routes/routes.dart';
 //import 'package:my_profile/weather/page/weather_page.dart';
 //import 'package:my_profile/Discover/page/discover_page.dart';
 
-//import 'package:my_profile/profile/page/profile_page.dart';
-//import 'package:my_profile/Discover/page/discover_page.dart';
-//import 'package:my_profile/Home/page/home_page.dart';
-
 //import 'package:my_profile/home/page/home_page.dart';
 //import 'package:my_profile/profile/page/profile_page.dart';
 //import 'package:my_profile/home/page/home_page.dart';
