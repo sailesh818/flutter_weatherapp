@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_profile/notification/push_notification_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,6 +10,17 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  PushNotificationService pushNotificationService = PushNotificationService();
+
+  @override
+  void initState() {
+    super.initState();
+    pushNotificationService
+      ..initialize()
+      ..requestNotificationPermission()
+      ..getFCMToken();
+  }
 
   @override
   Widget build(BuildContext context) {
