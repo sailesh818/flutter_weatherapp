@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
+  esewa_flutter_sdk:
+    path: ./esewa_flutter_sdk 
   
   
 

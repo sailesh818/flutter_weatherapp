@@ -8,6 +8,8 @@ class LocalNotificationService {
   Future<void> initialize(RemoteMessage message) async {
     final AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("@mipmap/ic_launcher");
+    // ignore: unused_local_variable
+    const iOSInit = DarwinInitializationSettings();
 
     // ignore: unused_local_variable
     final DarwinInitializationSettings darwinInitializationSettings =

@@ -1,5 +1,6 @@
 //import 'package:firebase_core/firebase_core.dart';
 import 'dart:math';
+import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:my_profile/notification/local_notification_service.dart';
@@ -23,7 +24,7 @@ class PushNotificationService {
   Future<String> getFCMToken() async {
     final fcmToken = await _firebaseMessaging.getToken();
 
-    log('FCM Token: $fcmToken' as num);
+    //log('FCM Token: $fcmToken' as num);
     return fcmToken ?? '';
   }
 

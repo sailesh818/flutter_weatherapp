@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_profile/firebase_options.dart';
+import 'package:my_profile/notification/push_notification_service.dart';
 //import 'package:my_profile/Home/page/home_page.dart';
 //import 'package:my_profile/profile/page/profile_page.dart';
 
@@ -23,6 +24,9 @@ import 'package:my_profile/routes/routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
+  await PushNotificationService().requestNotificationPermission();
+  await PushNotificationService().initialize();
   runApp(Flutterweatherapp());
 }
 
