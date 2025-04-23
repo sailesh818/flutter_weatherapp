@@ -50,6 +50,10 @@ dependencies:
   firebase_core: ^3.13.0
   firebase_messaging: ^15.2.5
   flutter_local_notifications: any
+  esewa_flutter_sdk:
+    path: ./esewa_flutter_sdk 
+  provider: ^6.1.4   
+  
 
 dev_dependencies:
   flutter_test:
